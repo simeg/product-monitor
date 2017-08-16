@@ -1,6 +1,6 @@
-lxml
-requests
+redis
 pep8
 pyyaml
 pytest
 yagmail
+selenium

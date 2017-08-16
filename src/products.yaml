@@ -1,0 +1,4 @@
+products:
+    - url: 'https://www.zara.com/se/sv/dam/nyheter/lång-kimono-i-silk-och-sammet-c840002p4786556.html'
+      price_selector: '.right-container div.price._product-price > span'
+      parse_type: 'zara'
