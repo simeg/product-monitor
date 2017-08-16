@@ -8,7 +8,7 @@ from selenium import webdriver
 
 
 def run():
-    products_obj = _get_file('./products.yaml')
+    products_obj = _get_file('src/products.yaml')
     products = products_obj.get('products')
 
     price_changes = map(lambda product: _handle_product(product), products)
