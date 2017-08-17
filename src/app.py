@@ -81,14 +81,11 @@ def _handle_product(product):
         price = _format_price(parse_type, raw_price)
         logger.info('Formatted price to=[%s]', price)
 
-        logger.info('Connecting to DB')
-        db_config = ({'host': os.environ.get('REDIS_URL'), 'port': ''}
-                     if is_production
-                     else _get_file('config.yaml').get('redis'))
+        connection = os.environ.get('REDIS_URL') if is_production \
+            else _get_local_db()
 
-        db = redis.from_url('redis://%s%s' %
-                            (db_config.get('host'),
-                             ':' + db_config.get('port')))
+        logger.info('Connecting to DB')
+        db = redis.from_url(connection)
         logger.info('DB connection established')
 
         logger.info('Querying DB for URL=[%s]', url)
@@ -159,6 +156,11 @@ def _handle_product(product):
     except Exception as e:
         logger.exception('Got unexpected exception of type=[%s]',
                          str(type(e)))
+
+
+def _get_local_db():
+    config = _get_file('config.yaml').get('redis')
+    return 'redis://%s:%s' % (config.get('host'), config.get('port'))
 
 
 def _str_to_dict(input_str):
