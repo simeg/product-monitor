@@ -13,6 +13,8 @@ from selenium.common.exceptions import NoSuchElementException
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+is_production = bool(os.environ.get('IS_PRODUCTION', failobj=False))
+
 RESPONSE_404 = '<html><head></head><body></body></html>'
 
 
@@ -49,8 +51,8 @@ def _handle_product(product):
 
         if url is None or css_selector is None or parse_type is None:
             logger.error(
-                "Product configuration is broken, URL=[%s] selector=[%s] "
-                "parse type=[%s]",
+                'Product configuration is broken, URL=[%s] selector=[%s] '
+                'parse type=[%s]',
                 url, css_selector, parse_type)
             return None
 
@@ -63,8 +65,9 @@ def _handle_product(product):
         logger.info('Request done')
 
         if browser.page_source == RESPONSE_404:
+            logger.info('Response was 404')
             return {
-                'todo': 'todo'
+                'todo': 'todo',
             }
 
         logger.info('Querying response with selector=[%s]', css_selector)
@@ -74,30 +77,37 @@ def _handle_product(product):
         # raw_price = '1 295,00 SEK'
         price = _format_price(parse_type, raw_price)
 
-        # Does not work locally at the moment
-        db_handler = redis.from_url(os.environ.get("REDIS_URL"))
-        db_product = db_handler.get(url)
+        db_config = ({'host': os.environ.get('REDIS_URL'), 'port': ''}
+                     if is_production
+                     else _get_file('config.yaml').get('redis'))
+
+        db = redis.from_url('redis://%s%s' %
+                            (db_config.get('host'),
+                             ':' + db_config.get('port')))
+
+        logger.info('Querying DB for URL=[%s]', url)
+        db_product = db.get(url)
 
         if db_product is None:
             try:
                 logger.info(
-                    "Inserting new value for url=[%s]",
+                    'Inserting new value for url=[%s]',
                     url)
-                query_result = db_handler.set(url, {
+                query_result = db.set(url, {
                     'price': price,
                     'status_code': 200,
                 })
 
                 if query_result is True:
                     logger.info(
-                        "Successfully inserted record for URL=[%s]",
+                        'Successfully inserted record for URL=[%s]',
                         url)
                     # As this is the first time this URL is being used it
                     # should not report of any changes, hence returning None
                     return None
                 else:
                     logger.error(
-                        "Failed inserted record for URL=[%s]",
+                        'Failed inserted record for URL=[%s]',
                         url)
                     return None
 
@@ -108,6 +118,7 @@ def _handle_product(product):
                 return None
 
         else:
+            logger.info('Found product in DB=[%s]', db_product)
             # We have already stored this product before, it's not the first
             # time we're dealing with this product
             product = _str_to_dict(db_product)

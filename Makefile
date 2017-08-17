@@ -10,3 +10,6 @@ lint:
 
 test:
 	pytest
+
+start-db:
+	redis-server /usr/local/etc/redis.conf
