@@ -74,9 +74,14 @@ def _handle_product(product):
         result = browser.find_element_by_css_selector(css_selector)
 
         raw_price = result.text
-        # raw_price = '1 295,00 SEK'
-        price = _format_price(parse_type, raw_price)
+        logger.info('Found price=[%s]', raw_price)
 
+        # raw_price = '1 295,00 SEK'
+
+        price = _format_price(parse_type, raw_price)
+        logger.info('Formatted price to=[%s]', price)
+
+        logger.info('Connecting to DB')
         db_config = ({'host': os.environ.get('REDIS_URL'), 'port': ''}
                      if is_production
                      else _get_file('config.yaml').get('redis'))
@@ -84,6 +89,7 @@ def _handle_product(product):
         db = redis.from_url('redis://%s%s' %
                             (db_config.get('host'),
                              ':' + db_config.get('port')))
+        logger.info('DB connection established')
 
         logger.info('Querying DB for URL=[%s]', url)
         db_product = db.get(url)
