@@ -102,9 +102,9 @@ def _handle_product(_product, db_conn):
 
 
 def _send_email(config, email_template):
-    password = config.get('PASSWORD')
-    username = config.get('USERNAME')
-    raw_recipients = config.get('RECIPIENTS')
+    username = config.get('EMAIL_USERNAME')
+    password = config.get('EMAIL_PASSWORD')
+    raw_recipients = config.get('EMAIL_RECIPIENTS')
     recipients = raw_recipients.split(',')
 
     emailer.send(
