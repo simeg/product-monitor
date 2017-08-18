@@ -20,8 +20,8 @@ def products():
 
 
 def _get(file):
-    return _get_file('src/%s.yaml' % file) if is_production \
-        else _get_file('%s.yaml' % file)
+    return _get_file('src/config/%s.yaml' % file) if is_production \
+        else _get_file('config/%s.yaml' % file)
 
 
 def _private_config():
