@@ -25,19 +25,19 @@ def run():
         os.environ.get('REDIS_URL') if cfgh.is_production
         else _get_local_db_conn())
 
-    price_changes = map(lambda product: _handle_product(product, db_conn),
-                        products)
+    events = map(lambda product: _handle_product(product, db_conn),
+                 products)
 
-    price_changes = filter(lambda x: x is not None, price_changes)
+    events = filter(lambda x: x is not None, events)
 
-    if not len(price_changes):
-        logger.info('No price changes found, doing nothing')
+    if not len(events):
+        logger.info('No events found, doing nothing')
         return
 
-    logger.info('Found [%s] price changes', len(price_changes))
-    logger.info(price_changes)  # TODO: Remove when done
+    logger.info('Found [%s] events', len(events))
+    print 'Events: ' + str(events)  # TODO: Remove when done
 
-    email_template = templater.format_for_email(price_changes)
+    email_template = templater.build(events)
 
     _send_email(cfgh, email_template)
 
