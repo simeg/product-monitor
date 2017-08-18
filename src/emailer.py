@@ -2,13 +2,13 @@
 
 import yagmail
 import logging
-import config_handler as cfgh
 
 logger = logging.getLogger(__name__)
 
 
-def send(password, username, sender_alias, recipients, subject, content):
-    if cfgh.is_production:
+def send(password, username, sender_alias, recipients, subject, content,
+         is_production):
+    if is_production:
         logger.info('Will send e-mail to %s', str(recipients))
         yag = yagmail.SMTP({username: sender_alias}, password)
         send_result = yag.send(recipients, subject, content)
