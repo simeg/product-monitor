@@ -1,6 +1,6 @@
 .PHONY: ci install lint test
 
-ci: install lint test
+ci: install test
 
 install:
 	pip install -r requirements.txt
