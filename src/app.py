@@ -35,11 +35,13 @@ def run():
         return
 
     logger.info('Found [%s] events', len(events))
-    print 'Events: ' + str(events)  # TODO: Remove when done
 
+    logger.info('Start building e-mail template')
     email_template = templater.build(events)
-
+    logger.info('Finished building e-mail template')
     _send_email(cfgh, email_template)
+
+    logger.info('Product Monitor execution finished')
 
 
 def _handle_product(_product, db_conn):
