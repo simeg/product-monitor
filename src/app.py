@@ -112,8 +112,8 @@ def _send_email(config, email_template):
         username,
         config.default().get('email').get('sender_alias'),
         recipients,
-        email_template.subject,
-        email_template.body,
+        email_template.get('subject'),
+        email_template.get('body'),
         cfgh.is_production)
 
 
