@@ -25,7 +25,7 @@ def _get(file):
 
 
 def _private_config():
-    return _get('private_config.yaml')
+    return _get('private_config')
 
 
 def _get_file(path):
