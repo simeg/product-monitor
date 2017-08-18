@@ -6,12 +6,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def send(password, username, sender_alias, recipients, subject, content,
+def send(password, username, sender_alias, recipients, subject, body,
          is_production):
     if is_production:
         logger.info('Will send e-mail to %s', str(recipients))
         yag = yagmail.SMTP({username: sender_alias}, password)
-        send_result = yag.send(recipients, subject, content)
+        send_result = yag.send(recipients, subject, body)
 
         # False means it did not send, everything else is OK
         if send_result is False:
