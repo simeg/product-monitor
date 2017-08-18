@@ -20,11 +20,10 @@ def query_url(db, url):
 
 def insert_product(db, url, price):
     logger.info(
-        'No product found, inserting new value for URL=[%s]',
+        'Will try to insert record for URL=[%s]',
         url)
     query_result = db.set(url, {
         'price': price,
-        'status_code': 200,
     })
 
     if query_result is True:

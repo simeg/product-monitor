@@ -21,10 +21,9 @@ def get_price(url, css_selector, parse_type):
         logger.info('Request finished')
 
         if browser.page_source == RESPONSE_404:
-            logger.info('Response was 404')
-            return {
-                'todo': 'todo',
-            }
+            msg = 'The request returned 404'
+            logger.error(msg)
+            raise BadResponseException(msg)
 
         logger.info('Querying response with selector=[%s]', css_selector)
         html_price_ele = browser.find_element_by_css_selector(css_selector)
@@ -39,10 +38,13 @@ def get_price(url, css_selector, parse_type):
 
         return price
 
-    except NoSuchElementException:
-        # If the CSS selector returned nothing
-        logger.warn(
+    except NoSuchElementException as e:
+        logger.error(
             'The CSS selector did not find anything on the URL, '
             'selector=[%s] URL=[%s]',
             css_selector, url)
-        return None
+        raise e
+
+
+class BadResponseException(Exception):
+    pass

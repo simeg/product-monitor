@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
 
-def format_for_email():
+def format_for_email(price_changes):
     # Return body and subject
-    pass
+
+    return {
+        'subject': 'TODO',
+        'body': dict('TODO'),
+    }
