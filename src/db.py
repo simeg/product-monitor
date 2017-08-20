@@ -4,6 +4,7 @@ import logging
 import redis
 
 logger = logging.getLogger(__name__)
+hash_cache = {}
 
 
 def connect(url):
@@ -14,8 +15,9 @@ def connect(url):
 
 
 def query_product(db, url):
-    logger.info('Querying DB for key=[%s]', url)
-    result = db.get(url)
+    key = _hash(url)
+    logger.info('Querying DB for key=[%s]', key)
+    result = db.get(key)
 
     if result is None:
         logger.info('Product was not found in DB')
@@ -26,8 +28,9 @@ def query_product(db, url):
 
 
 def insert_product(db, url, value):
-    logger.info('Will try to insert value=[%s] with key=[%s]', value, url)
-    query_result = db.set(url, {
+    key = _hash(url)
+    logger.info('Will try to insert value=[%s] with key=[%s]', value, key)
+    query_result = db.set(key, {
         'value': value,
     })
 
@@ -40,3 +43,12 @@ def insert_product(db, url, value):
     else:
         logger.error('Failed inserting record')
         return None
+
+
+def _hash(value):
+    if value in hash_cache:
+        return hash_cache.get(value)
+    else:
+        hashed_value = hash(value)
+        hash_cache[value] = hashed_value
+        return hashed_value
