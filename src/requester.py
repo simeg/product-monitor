@@ -13,30 +13,31 @@ RESPONSE_404 = '<html><head></head><body></body></html>'
 def get_element_value(url, css_selector, parse_type):
     try:
         browser = webdriver.PhantomJS()
-        # Wait for response for 30 seconds before throwing Exception
+        # Wait for response for 30 seconds before timing out
         browser.implicitly_wait(30)
 
         logger.info('Requesting [%s]', url)
         browser.get(url)
-        logger.info('Request finished')
 
         if browser.page_source == RESPONSE_404:
-            msg = 'The request returned 404'
+            msg = 'Request came back with status code 404'
             logger.error(msg)
             raise BadResponseException(msg)
 
+        logger.info('Request came back with status code 200, all is good')
+
         logger.info('Querying response with selector=[%s]', css_selector)
-        html_price_ele = browser.find_element_by_css_selector(css_selector)
+        html_value_ele = browser.find_element_by_css_selector(css_selector)
 
-        raw_price = html_price_ele.text
-        logger.info('Found price=[%s]', raw_price)
+        raw_value = html_value_ele.text
+        logger.info('Found value=[%s]', raw_value)
 
-        # raw_price = '1 295,00 SEK'  # Testing Zara
+        # raw_value = '1 295,00 SEK'  # Testing Zara
 
-        price = parser.parse(parse_type, raw_price)
-        logger.info('Formatted price to=[%s]', price)
+        parsed_value = parser.parse(parse_type, raw_value)
+        logger.info('Parsed value to=[%s]', parsed_value)
 
-        return price
+        return parsed_value
 
     except NoSuchElementException as e:
         logger.error(

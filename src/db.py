@@ -14,29 +14,29 @@ def connect(url):
 
 
 def query_product(db, url):
-    logger.info('Querying DB for URL=[%s]', url)
+    logger.info('Querying DB for key=[%s]', url)
     result = db.get(url)
-    logger.info('Found product in DB=[%s]', str(result))
+
+    if result is None:
+        logger.info('Product was not found in DB')
+    else:
+        logger.info('Found product in DB=[%s]', str(result))
+
     return result
 
 
-def insert_product(db, url, price):
-    logger.info(
-        'Will try to insert record for URL=[%s]',
-        url)
+def insert_product(db, url, value):
+    logger.info('Will try to insert value=[%s] with key=[%s]', value, url)
     query_result = db.set(url, {
-        'price': price,
+        'value': value,
     })
 
     if query_result is True:
-        logger.info(
-            'Successfully inserted record for URL=[%s]',
-            url)
+        logger.info('Successfully inserted value')
         # As this is the first time this URL is being used it
         # should not report of any changes, hence returning None
         return None
+
     else:
-        logger.error(
-            'Failed inserting record for URL=[%s]',
-            url)
+        logger.error('Failed inserting record')
         return None
