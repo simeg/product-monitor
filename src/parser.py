@@ -6,6 +6,9 @@ def parse(parse_type, raw_price):
         'zara': _zara_format,
     }
 
+    if parse_type not in parse_options:
+        raise KeyError('Missing parse option=[{}]'.format(parse_type))
+
     return parse_options[parse_type](raw_price)
 
 
