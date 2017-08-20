@@ -9,6 +9,9 @@ def build(events):
     subject = _build_subject()
     body = map(lambda event: _build_event_row(event), events)
 
+    # Make list into string and separate elements with '\n'
+    body = '\n'.join(body)
+
     return {
         'subject': subject,
         'body': body,
