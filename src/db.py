@@ -13,9 +13,11 @@ def connect(url):
     return db
 
 
-def query_url(db, url):
+def query_product(db, url):
     logger.info('Querying DB for URL=[%s]', url)
-    return db.get(url)
+    result = db.get(url)
+    logger.info('Found product in DB=[%s]', str(result))
+    return result
 
 
 def insert_product(db, url, price):
