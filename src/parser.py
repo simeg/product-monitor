@@ -3,6 +3,7 @@
 
 def parse(parse_type, raw_price):
     parse_options = {
+        'noop': lambda _: _,
         'zara': _zara_format,
     }
 
