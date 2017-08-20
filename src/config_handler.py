@@ -19,9 +19,9 @@ def products():
     return _get('products')
 
 
-def _get(file):
-    return _get_file('src/config/%s.yaml' % file) if is_production \
-        else _get_file('config/%s.yaml' % file)
+def _get(file_path):
+    return _get_file('src/config/%s.yaml' % file_path) if is_production \
+        else _get_file('config/%s.yaml' % file_path)
 
 
 def _private_config():
