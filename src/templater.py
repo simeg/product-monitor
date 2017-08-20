@@ -42,16 +42,17 @@ def _build_event_row(event):
 
 def _format_monitored_product(event):
     event_type = event.get('type')
+
     price_is_higher = event_type is 'PRICE_HIGHER'
     diff_type = 'hojts' if price_is_higher else 'sankts'
+    price_diff = abs(int(event.get('old_price')) - int(event.get('new_price')))
 
     return (('Priset pa <a href="{}">en bevakad produkt</a> har '
-             '<strong>{}</strong> fran {}kr till {}kr (med {}kr skillnad)')
-        .encode('utf-8')
-        .format(
+             '<strong>{}</strong> fran {}kr till {}kr '
+             '(med {}kr skillnad)').encode('utf-8').format(
         event.get('url'),
         diff_type,
-        event.get('new_price') if price_is_higher else event.get('old_price'),
-        event.get('old_price') if price_is_higher else event.get('new_price'),
-        abs(int(event.get('old_price')) - int(event.get('new_price'))))
+        event.get('old_price'),
+        event.get('new_price'),
+        price_diff)
     ).encode('utf-8')
