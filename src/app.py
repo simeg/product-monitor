@@ -58,40 +58,41 @@ def _handle_product(_product, db_conn):
                 url, css_selector, parse_type)
             return None
 
-        price = requester.get_price(url, css_selector, parse_type)
+        fetched_value = \
+            requester.get_element_value(url, css_selector, parse_type)
 
-        stored_product = db_handler.query_url(db_conn, url)
+        stored_product = db_handler.query_product(db_conn, url)
 
         if stored_product is None:
             logger.info('Product is new, storing it in DB')
-            db_handler.insert_product(db_conn, url, price)
+            db_handler.insert_product(db_conn, url, fetched_value)
             return None
 
         else:
-            logger.info('Found product in DB=[%s]', stored_product)
+            logger.info('Will examine if product value has changed')
             stored_product = _str_to_dict(stored_product)
             stored_price = stored_product.get('price')
 
-            price = int(price)
+            fetched_value = int(fetched_value)
             stored_price = int(stored_price)
 
-            if price == stored_price:
+            if fetched_value == stored_price:
                 return None
 
-            if price < stored_price:
+            if fetched_value < stored_price:
                 return {
                     'type': 'PRICE_LOWER',
                     'url': url,
                     'old_price': stored_price,
-                    'new_price': price,
+                    'new_price': fetched_value,
                 }
 
-            if price > stored_price:
+            if fetched_value > stored_price:
                 return {
                     'type': 'PRICE_HIGHER',
                     'url': url,
                     'old_price': stored_price,
-                    'new_price': price,
+                    'new_price': fetched_value,
                 }
 
     except NoSuchElementException or BadResponseException:

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 RESPONSE_404 = '<html><head></head><body></body></html>'
 
 
-def get_price(url, css_selector, parse_type):
+def get_element_value(url, css_selector, parse_type):
     try:
         browser = webdriver.PhantomJS()
         # Wait for response for 30 seconds before throwing Exception
