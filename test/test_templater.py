@@ -45,6 +45,18 @@ class TestCases(unittest.TestCase):
 
         assert expected_row == actual_row
 
+    def test_build_row_stock_change(self):
+        event = {'type': 'STOCK_CHANGE', 'url': 'arbitrary-url',
+                 'new_price': 'In Stock', 'old_price': 'Out of Stock'}
+
+        expected_row = templater._build_row(event)
+
+        actual_row = '<p><a href="arbitrary-url">En bevakad produkt</a> har ' \
+                     'andrat lagerstatus fran <strong>Out of Stock</strong> ' \
+                     'till <strong>In Stock</strong></p>'
+
+        assert expected_row == actual_row
+
     def test_build_row_product_unknown_event_type(self):
         event = {'type': 'NON_EXISTING_TYPE'}
 
