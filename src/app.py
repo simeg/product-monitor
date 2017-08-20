@@ -58,42 +58,62 @@ def _handle_product(_product, db_conn):
                 url, css_selector, parse_type)
             return None
 
-        fetched_value = \
+        new_value = \
             requester.get_element_value(url, css_selector, parse_type)
 
         stored_product = db_handler.query_product(db_conn, url)
 
         if stored_product is None:
             logger.info('Product is new, storing it in DB')
-            db_handler.insert_product(db_conn, url, fetched_value)
+            db_handler.insert_product(db_conn, url, new_value)
             return None
 
         else:
             logger.info('Will examine if product value has changed')
+
             stored_product = _str_to_dict(stored_product)
-            stored_price = stored_product.get('price')
+            product_type = _product.get('type')
 
-            fetched_value = int(fetched_value)
-            stored_price = int(stored_price)
+            # TODO: Extract to function
+            if product_type == 'price_change':
+                old_price = stored_product.get('value')
 
-            if fetched_value == stored_price:
-                return None
+                new_value = int(new_value)
+                old_price = int(old_price)
 
-            if fetched_value < stored_price:
+                if new_value == old_price:
+                    return None
+
+                if new_value < old_price:
+                    return {
+                        'type': 'PRICE_LOWER',
+                        'url': url,
+                        'old_price': old_price,
+                        'new_price': new_value,
+                    }
+
+                if new_value > old_price:
+                    return {
+                        'type': 'PRICE_HIGHER',
+                        'url': url,
+                        'old_price': old_price,
+                        'new_price': new_value,
+                    }
+
+            elif product_type == 'stock_change':
+                old_stock_status = stored_product.get('value')
+
+                if new_value == old_stock_status:
+                    return None
+
                 return {
-                    'type': 'PRICE_LOWER',
+                    'type': 'STOCK_CHANGE',
                     'url': url,
-                    'old_price': stored_price,
-                    'new_price': fetched_value,
+                    'old_price': old_stock_status,  # TODO: Use term value
+                    'new_price': new_value,         # instead of price in key
                 }
 
-            if fetched_value > stored_price:
-                return {
-                    'type': 'PRICE_HIGHER',
-                    'url': url,
-                    'old_price': stored_price,
-                    'new_price': fetched_value,
-                }
+            raise KeyError('Invalid type for product=[%s]' % product_type)
 
     except NoSuchElementException or BadResponseException:
         return {
