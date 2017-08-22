@@ -83,6 +83,7 @@ def _handle_product(_product, db_conn):
                 old_price = int(old_price)
 
                 if new_value == old_price:
+                    logger.info('Nothing has changed, value is the same')
                     return None
 
                 if new_value < old_price:
@@ -105,6 +106,7 @@ def _handle_product(_product, db_conn):
                 old_stock_status = stored_product.get('value')
 
                 if new_value == old_stock_status:
+                    logger.info('Nothing has changed, value is the same')
                     return None
 
                 return {
