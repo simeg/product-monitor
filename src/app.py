@@ -119,10 +119,10 @@ def _handle_product(_product, db_conn):
             raise KeyError('Invalid type for product=[%s]' % product_type)
 
     except NoSuchElementException or BadResponseException:
-        return {
-            'type': 'PRODUCT_UNAVAILABLE',
-            'url': url,
-        }
+        logger.error('Product or value is not available')
+        # TODO: Store occurrence in DB, if it happens n times in a row an
+        # e-mail should be sent notifying the user
+        return None
 
 
 def _send_email(config, email_template):
