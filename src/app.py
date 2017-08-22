@@ -35,6 +35,7 @@ def run():
         return
 
     logger.info('Found [%s] events', len(events))
+    logger.info(str(events))
 
     logger.info('Start building e-mail template')
     email_template = templater.build(events)
