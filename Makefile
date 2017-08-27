@@ -1,4 +1,4 @@
-.PHONY: ci install lint test
+.PHONY: ci install lint test deploy start-db
 
 ci: install lint test
 
@@ -10,6 +10,9 @@ lint:
 
 test:
 	pytest
+
+deploy:
+	git push heroku master
 
 start-db:
 	redis-server /usr/local/etc/redis.conf
